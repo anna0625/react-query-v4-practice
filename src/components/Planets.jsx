@@ -3,13 +3,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Planet } from "./Planet";
 
 const fetchPlanets = async (page) => {
-  console.log(page);
+  // console.log(page);
   const res = await fetch(`https://swapi.dev/api/planets/?page=${page}`);
   return res.json();
 };
 
 export const Planets = () => {
-  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const pageRef = useRef(1);
@@ -27,16 +26,25 @@ export const Planets = () => {
     }
   );
 
+  // const { isError, isSuccess } = useQuery(
+  //   ["planets", page + 7],
+  //   () => fetchPlanets(page + 7),
+  //   {
+  //     staleTime: 0,
+  //     onSuccess: () => {
+  //       console.log("next data fetched successfully");
+  //     },
+  //     keepPreviousData: true,
+  //   }
+  // );
+
   // Prefetch the next page!
   useEffect(() => {
-    queryClient.prefetchQuery(["planets", page + 1], () =>
-      fetchPlanets(page + 1)
-    );
     pageRef.current = page + 1;
     if (pageRef.current === 7) {
       setHasMore(false);
     }
-  }, [page, queryClient]);
+  }, [page]);
 
   return (
     <div>
